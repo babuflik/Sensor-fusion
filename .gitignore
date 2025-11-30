@@ -13,3 +13,7 @@ CMakeFiles/
 cmake_install.cmake
 install_manifest.txt
 Makefile
+.venv/
+artifacts/
+__pycache__/
+*.pyc
