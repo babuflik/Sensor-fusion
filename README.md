@@ -1,4 +1,6 @@
-# Hum-Finder
+# Hum-Finder (Sensor Fusion Toolbox Branch)
+
+**Note:** This is the `hum-finder` application branch. The core sensor fusion library is available in the `main` branch.
 
 Acoustic source localization for finding annoying low-frequency drone sounds in apartments using Time Difference of Arrival (TDOA) analysis.
 
