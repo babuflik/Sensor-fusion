@@ -210,7 +210,7 @@ protected:
                     // Simulate this with time-varying random component
                     // Typical for droning sounds: 50-500 Hz fundamental + harmonics
                     frequency_error = 0.3e-6 * std::sin(2.0 * M_PI * 0.5 * k);
-                    frequency_error += 0.2e-6 * (rng() % 100 - 50) / 50.0; // ±0.2μs variation
+                    frequency_error += 0.2e-6 * (static_cast<int>(rng() % 100) - 50) / 50.0; // ±0.2μs variation
                 }
                 
                 measurements.y(i, k) = toa + noise + multipath_error + frequency_error;
@@ -592,6 +592,51 @@ TEST_F(RealWorldDroneTest, ConvergenceOverTime) {
     
     // EXPECT_LT(final_error, initial_error * 0.3) << "Should improve significantly over time";
     // EXPECT_LT(final_error, 0.3) << "Should converge to accurate estimate";
+}
+
+// ============================================================================
+// TEST 8: UKF vs EKF Comparison
+// ============================================================================
+TEST_F(RealWorldDroneTest, UKF_vs_EKF_Comparison) {
+    // Source: Hidden speaker in room (same as Test 5)
+    Eigen::Vector3d source_pos;
+    source_pos << 0.2, 1.5, 0.3;
+    
+    std::cout << "\n=== UKF vs EKF Comparison ===\n";
+    std::cout << "Source position: [" << source_pos.transpose() << "] m\n";
+    
+    // Generate measurements
+    Sig measurements = generateMeasurements(source_pos, 30, true);
+    
+    // Use ML estimation for initial guess
+    Eigen::Vector3d ml_init = computeMLInitialGuess(measurements);
+    ekf_model->x0 = ml_init;
+    
+    // Run EKF
+    std::cout << "Running EKF...\n";
+    auto [x_ekf, P_ekf] = ekf_model->ekf(measurements);
+    Eigen::Vector3d ekf_final = x_ekf.col(x_ekf.cols() - 1);
+    double ekf_error = (ekf_final - source_pos).norm();
+    
+    // Run UKF
+    std::cout << "Running UKF...\n";
+    auto [x_ukf, P_ukf] = ekf_model->ukf(measurements);
+    Eigen::Vector3d ukf_final = x_ukf.col(x_ukf.cols() - 1);
+    double ukf_error = (ukf_final - source_pos).norm();
+    
+    std::cout << "\nResults:\n";
+    std::cout << "EKF Final Estimate: [" << ekf_final.transpose() << "] m, Error: " << ekf_error << " m\n";
+    std::cout << "UKF Final Estimate: [" << ukf_final.transpose() << "] m, Error: " << ukf_error << " m\n";
+    
+    if (ukf_error < ekf_error) {
+        std::cout << "UKF performed better!\n";
+    } else {
+        std::cout << "EKF performed better (or similar)!\n";
+    }
+    
+    // Both should be reasonably accurate
+    EXPECT_LT(ukf_error, 2.0);
+    EXPECT_LT(ekf_error, 2.0);
 }
 
 // ============================================================================
