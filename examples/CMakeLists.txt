@@ -11,3 +11,7 @@ target_link_libraries(example_sensor_model PRIVATE sensor_fusion)
 # Example 3: ML estimation
 add_executable(example_ml_estimation example_ml_estimation.cpp)
 target_link_libraries(example_ml_estimation PRIVATE sensor_fusion)
+
+# Lab 1: Acoustic Localization
+add_executable(lab1_main lab1_main.cpp)
+target_link_libraries(lab1_main PRIVATE sensor_fusion)

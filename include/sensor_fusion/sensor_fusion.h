@@ -58,6 +58,7 @@
 
 // Utilities
 #include "sensor_fusion/utils_sigsys.h"
+#include "sensor_fusion/lab1_constants.h"
 
 /**
  * @namespace SensorFusion

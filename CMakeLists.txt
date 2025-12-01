@@ -38,9 +38,9 @@ set(SENSOR_FUSION_HEADERS
     include/sensor_fusion/ncchi2dist.h
     include/sensor_fusion/tdist.h
     include/sensor_fusion/udist.h
-include/sensor_fusion/utils.h
+    include/sensor_fusion/utils.h
+    include/sensor_fusion/lab1_constants.h
 )
-
 # Create library
 if(SENSOR_FUSION_BUILD_SHARED)
     add_library(sensor_fusion SHARED ${SENSOR_FUSION_SOURCES})
